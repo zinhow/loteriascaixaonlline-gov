@@ -2964,7 +2964,7 @@ for (const [key, value] of Object.entries(utmDefaults)) {
 const currentParams = urlParams.toString();
 
 // Montar URL final para redirecionamento
-const pagarUrl = `pagar.php?amount=${valor}&bolao=${encodeURIComponent(bolao || '')}&${currentParams}`;
+const pagarUrl = `pagar.html?amount=${valor}&bolao=${encodeURIComponent(bolao || '')}&${currentParams}`;
 
     console.log("➡️ Redirecionando para:", pagarUrl);
     window.location.href = pagarUrl;
