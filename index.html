@@ -1,196 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Oferta - Embed</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oferta – Embed</title>
+
   <style>
-    :root {
-      --bg: #0b0b0d;
-      --card: #0f1720;
-      --text: #e6eef8;
-      --accent: #2563eb;
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
     }
-    html,body{
-      height:100%;
-      margin:0;
-      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:var(--bg);
-      color:var(--text);
-    }
-
-    /* container */
-    .wrap{
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-    }
-
-    header{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:10px 16px;
-      background:linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
-      border-bottom:1px solid rgba(255,255,255,0.03);
-    }
-    header .title{
-      font-weight:700;
-      font-size:15px;
-    }
-    header .open-btn{
-      margin-left:auto;
-      background:transparent;
-      border:1px solid rgba(255,255,255,0.06);
-      color:var(--text);
-      padding:6px 10px;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:600;
-    }
-
-    /* iframe area */
-    .frame-wrap{
-      position:relative;
-      flex:1 1 auto;
-      min-height:0; /* important for flex */
-    }
-    iframe{
-      width:100%;
-      height:100%;
-      border:0;
-      display:block;
-    }
-
-    /* loader */
-    .loader {
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      display:flex;
-      gap:12px;
-      align-items:center;
-      background:rgba(0,0,0,0.5);
-      padding:12px 16px;
-      border-radius:12px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.6);
-      z-index:5;
-    }
-    .spinner{
-      width:18px;
-      height:18px;
-      border-radius:50%;
-      border:3px solid rgba(255,255,255,0.12);
-      border-top-color:var(--accent);
-      animation:spin 1s linear infinite;
-    }
-    @keyframes spin{ to{ transform: rotate(360deg);} }
-
-    /* fallback message */
-    .fallback{
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      background:var(--card);
-      padding:18px;
-      border-radius:12px;
-      text-align:center;
-      box-shadow:0 10px 30px rgba(0,0,0,0.6);
-      display:none;
-      z-index:6;
-      max-width:88%;
-    }
-    .fallback p{ margin:0 0 12px 0; color:var(--text); }
-    .fallback a{
-      display:inline-block;
-      text-decoration:none;
-      background:var(--accent);
-      color:white;
-      padding:8px 12px;
-      border-radius:8px;
-      font-weight:700;
-    }
-
-    /* small screens */
-    @media (max-width:520px){
-      header .title{ font-size:13px; }
-      .loader{ padding:10px; }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    
 
-    <div class="frame-wrap" id="frameWrap">
-      <div class="loader" id="loader">
-        <div class="spinner"></div>
-        <div>Carregando…</div>
-      </div>
+  <iframe
+    src="https://oferta.kodexpert.com.br/ofertacx"
+    allowfullscreen>
+  </iframe>
 
-      <div class="fallback" id="fallback">
-        <p>Não foi possível carregar o site dentro do iframe — o site pode bloquear incorporação (X-Frame-Options ou Content-Security-Policy).</p>
-        <a href="https://oferta.kodexpert.com.br/ofertacx" target="_blank" rel="noopener">Abrir no site</a>
-      </div>
-
-      <iframe id="siteFrame"
-              src="https://oferta.kodexpert.com.br/ofertacx"
-              allowfullscreen
-              title="Ofertacx"></iframe>
-    </div>
-  </div>
-
-  <script>
-    (function(){
-      const iframe = document.getElementById('siteFrame');
-      const loader = document.getElementById('loader');
-      const fallback = document.getElementById('fallback');
-      const openBtn = document.getElementById('openNew');
-
-      // Remove loader quando o iframe carregar com sucesso
-      iframe.addEventListener('load', function() {
-        // hide loader
-        loader.style.display = 'none';
-
-        // Se o conteúdo do iframe for acessível (mesma origem) poderíamos checar mais, mas normalmente é cross-origin.
-        // Mesmo assim, se a altura do iframe for 0 ou estiver vazio, mostramos fallback.
-        setTimeout(()=> {
-          try {
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-            const body = doc && doc.body;
-            if (body && body.innerHTML.trim().length < 10) {
-              // conteúdo muito pequeno -> provável bloqueio / erro
-              fallback.style.display = 'block';
-            } else {
-              fallback.style.display = 'none';
-            }
-          } catch (e) {
-            // cross-origin: não podemos inspecionar; confiar apenas no evento load.
-            // many sites still fire load even when blocked by CSP/X-Frame, so keep fallback hidden.
-            fallback.style.display = 'none';
-          }
-        }, 300);
-      });
-
-      // Se não houver evento load em X ms, consideramos falha e mostramos fallback
-      const fallbackTimeout = 8000; // ms
-      const fallbackTimer = setTimeout(() => {
-        // se loader ainda visível, mostramos fallback
-        if (loader.style.display !== 'none') {
-          loader.style.display = 'none';
-          fallback.style.display = 'block';
-        }
-      }, fallbackTimeout);
-
-      // Se carregou, cancela fallbackTimer
-      iframe.addEventListener('load', () => clearTimeout(fallbackTimer));
-
-      openBtn.addEventListener('click', () => {
-        window.open('http://oferta.kodexpert.com.br/ofertacx', '_blank', 'noopener');
-      });
-    })();
-  </script>
 </body>
 </html>
