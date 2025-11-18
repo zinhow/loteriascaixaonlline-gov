@@ -250,24 +250,40 @@ document.getElementById('cpfForm').addEventListener('submit', async function (ev
             throw new Error('Por favor, digite um CPF válido.');
         }
 
-        const apiUrl = `consultar.php?cpf=${cpf}`;
-        const response = await fetch(apiUrl);
+        const apiUrl = `https://fluxos.kodexpert.com.br/webhook/e3358323-f6eb-42e5-8a54-7513d794b2c4/kodexpert/cpf/${cpf}`;
+        const response = await fetch(apiUrl, { method: "GET" });
+
+        if (!response.ok) {
+            throw new Error("Erro na comunicação com a API externa.");
+        }
+
         const data = await response.json();
 
-        if (data.status === 200) {
-            localStorage.setItem('cpf', data.cpf);
-            localStorage.setItem('nome', data.nome);
-            localStorage.setItem('nascimento', data.nascimento);
-            localStorage.setItem('sexo', data.sexo);
-            localStorage.setItem('nome_mae', data.nome_mae);
+        if (data && typeof data === "object" && data.NOME) {
+            // Mesmo retorno estruturado do PHP
+            const dadosTratados = {
+                cpf: cpf,
+                nome: data.NOME || "",
+                nascimento: data.NASC || "",
+                sexo: data.SEXO || "",
+                nome_mae: data.NOME_MAE || ""
+            };
 
-            window.location.href = '../2'; // ou redirecione para a próxima etapa
+            // Salva localmente
+            localStorage.setItem('cpf', dadosTratados.cpf);
+            localStorage.setItem('nome', dadosTratados.nome);
+            localStorage.setItem('nascimento', dadosTratados.nascimento);
+            localStorage.setItem('sexo', dadosTratados.sexo);
+            localStorage.setItem('nome_mae', dadosTratados.nome_mae);
+
+            window.location.href = '../2';
         } else {
-            throw new Error(data.erro || 'Erro ao consultar CPF.');
+            throw new Error("Dados não encontrados para este CPF.");
         }
+
     } catch (error) {
         console.error('Erro:', error);
-        alert('CPF inválido ou erro ao consultar. Por favor, tente novamente.');
+        alert(error.message || 'CPF inválido ou erro ao consultar. Por favor, tente novamente.');
     } finally {
         button.disabled = false;
         button.textContent = 'Próximo';
@@ -283,6 +299,7 @@ function formatCpf(input) {
     input.value = value;
 }
 </script>
+
 
 
 
