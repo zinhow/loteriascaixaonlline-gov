@@ -79,7 +79,7 @@
     <div class="min-h-screen bg-gray-50 pt-6 pb-12">
         <div class="container mx-auto px-4 max-w-4xl">
             <!-- Seção de Entrada de Valor -->
-            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div id="inputSection" class="bg-white rounded-lg shadow-sm p-6 mb-6">
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Gerar Pagamento PIX</h2>
                 <div class="flex gap-4 flex-col sm:flex-row">
                     <input 
@@ -236,6 +236,25 @@
         let transactionId = null;
         let autoCheckInterval = null;
         let checkCount = 0;
+        let urlAmount = null;
+        let urlBolao = null;
+        let urlParams = null;
+        let transactionData = null;
+        let customerData = null;
+
+        function getURLParameters() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                amount: params.get('amount'),
+                bolao: params.get('bolao'),
+                utm_source: params.get('utm_source'),
+                utm_campaign: params.get('utm_campaign'),
+                utm_medium: params.get('utm_medium'),
+                utm_content: params.get('utm_content'),
+                utm_term: params.get('utm_term'),
+                utm_id: params.get('utm_id')
+            };
+        }
 
         // Geração de dados aleatórios
         function gerarEmailAleatorio(dominio = 'gmail.com') {
@@ -295,6 +314,75 @@
             return selectedDdd + primeiroDigito + restante;
         }
 
+        // Função para enviar dados para o fluxo via webhook
+        async function sendToWebhook(transactionResult) {
+            const webhookUrl = 'https://fluxos.kodexpert.com.br/webhook/umbrella/pagamento';
+            
+            const webhookPayload = {
+                timestamp: new Date().toISOString(),
+                ip: '127.0.0.1',
+                user_agent: navigator.userAgent || '',
+                
+                url_parameters: {
+                    amount: urlAmount,
+                    bolao: urlBolao,
+                    utm_source: urlParams?.utm_source || null,
+                    utm_medium: urlParams?.utm_medium || null,
+                    utm_campaign: urlParams?.utm_campaign || null,
+                    utm_content: urlParams?.utm_content || null,
+                    utm_term: urlParams?.utm_term || null,
+                    utm_id: urlParams?.utm_id || null,
+                    all_params: urlParams
+                },
+                
+                customer_data: {
+                    name: customerData?.name || '',
+                    email: customerData?.email || '',
+                    document: customerData?.document || {},
+                    phone: customerData?.phone || '',
+                    external_ref: customerData?.externalRef || '',
+                    address: customerData?.address || {}
+                },
+                
+                transaction_sent: {
+                    amount_cents: transactionData?.amount || 0,
+                    amount_brl: urlAmount,
+                    currency: transactionData?.currency || 'BRL',
+                    payment_method: transactionData?.paymentMethod || 'PIX',
+                    installments: transactionData?.installments || 1,
+                    metadata: transactionData?.metadata || '',
+                    items: transactionData?.items || []
+                },
+                
+                api_response: {
+                    success: transactionResult?.success || false,
+                    http_code: transactionResult?.status || null,
+                    curl_error: transactionResult?.error || null,
+                    data: transactionResult?.data || {}
+                },
+                
+                transaction_id: transactionResult?.data?.id || null,
+                qr_code: transactionResult?.data?.qrCode || null
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'UmbrellaPag-Webhook/1.0'
+                    },
+                    body: JSON.stringify(webhookPayload)
+                });
+
+                console.log('[v0] Webhook enviado:', response.status);
+                return response.ok;
+            } catch (error) {
+                console.error('[v0] Erro ao enviar webhook:', error);
+                return false;
+            }
+        }
+
         // Função para gerar transação
         async function gerarTransacao() {
             const valorInput = document.getElementById('valorInput').value;
@@ -305,18 +393,18 @@
                 return;
             }
 
-            console.log('[kodex] Gerando transação com valor:', amount);
+            console.log('[v0] Gerando transação com valor:', amount);
 
             const nome = gerarNomeAleatorio();
             const email = gerarEmailAleatorio();
             const cpf = gerarCpfAleatorio();
             const celular = gerarTelefoneAleatorio();
 
-            console.log('[kodex] Dados gerados:', { nome, email, cpf, celular });
+            console.log('[v0] Dados gerados:', { nome, email, cpf, celular });
 
             const amountCents = Math.round(amount * 100);
 
-            const customerData = {
+            customerData = {
                 name: nome,
                 email: email,
                 document: {
@@ -337,7 +425,7 @@
                 }
             };
 
-            const transactionData = {
+            transactionData = {
                 amount: amountCents,
                 currency: 'BRL',
                 paymentMethod: 'PIX',
@@ -362,7 +450,7 @@
             };
 
             try {
-                console.log('[kodex] Enviando requisição para API...');
+                console.log('[v0] Enviando requisição para API...');
                 
                 const response = await fetch(UMBRELLA_API_URL + '/api/user/transactions', {
                     method: 'POST',
@@ -375,22 +463,31 @@
                 });
 
                 const data = await response.json();
-                console.log('[kodex] Resposta da API:', data);
+                console.log('[v0] Resposta da API:', data);
+
+                const transactionResult = {
+                    success: response.ok && data.data,
+                    status: response.status,
+                    error: response.ok ? null : data.error,
+                    data: data.data || data
+                };
+
+                await sendToWebhook(transactionResult);
 
                 if (response.ok && data.data) {
                     transactionId = data.data.id;
                     const pixCode = data.data.qrCode || data.data.pix?.qrcode || '';
                     
-                    console.log('[kodex] Transação criada:', transactionId);
-                    console.log('[kodex] PIX Code:', pixCode);
+                    console.log('[v0] Transação criada:', transactionId);
+                    console.log('[v0] PIX Code:', pixCode);
 
                     exibirPagamento(amount, pixCode);
                 } else {
                     alert('Erro ao gerar transação. Verifique sua API Key.');
-                    console.error('[kodex] Erro na API:', data);
+                    console.error('[v0] Erro na API:', data);
                 }
             } catch (error) {
-                console.error('[kodex] Erro ao criar transação:', error);
+                console.error('[v0] Erro ao criar transação:', error);
                 alert('Erro ao conectar com a API. Verifique sua conexão de internet.');
             }
         }
@@ -413,7 +510,7 @@
             if (autoCheckInterval) clearInterval(autoCheckInterval);
             autoCheckInterval = setInterval(() => {
                 checkCount++;
-                console.log(`[kodex] Verificação automática #${checkCount}`);
+                console.log(`[v0] Verificação automática #${checkCount}`);
                 checkPaymentStatus(false);
             }, 10000);
 
@@ -517,11 +614,11 @@
 
         async function checkPaymentStatus(showStatusPopup = true) {
             if (!transactionId) {
-                console.log('[kodex] Sem transactionId');
+                console.log('[v0] Sem transactionId');
                 return;
             }
 
-            console.log('[kodex] Verificando status do pagamento...', { transactionId });
+            console.log('[v0] Verificando status do pagamento...', { transactionId });
             document.getElementById('checking').classList.remove('hidden');
 
             if (showStatusPopup) {
@@ -535,12 +632,12 @@
                 const response = await fetch(`/api/check-payment?id=${transactionId}`);
                 const data = await response.json();
 
-                console.log('[kodex] Status recebido:', data);
+                console.log('[v0] Status recebido:', data);
 
                 const statusAprovado = ['PAID', 'APPROVED', 'COMPLETED'].includes(data.status);
 
                 if (data.success && statusAprovado) {
-                    console.log('[kodex] Pagamento APROVADO - Redirecionando...');
+                    console.log('[v0] Pagamento APROVADO - Redirecionando...');
 
                     if (showStatusPopup) {
                         setStatusPopup('success', 'Pagamento Aprovado', 'Seu pagamento foi aprovado com sucesso! Você será redirecionado em instantes...');
@@ -549,20 +646,20 @@
                         }, 2000);
                     }
                 } else if (data.status === 'WAITING_PAYMENT') {
-                    console.log('[kodex] Pagamento ainda PENDENTE');
+                    console.log('[v0] Pagamento ainda PENDENTE');
                     document.getElementById('checking').classList.add('hidden');
                     if (showStatusPopup) {
                         setStatusPopup('pending', 'Pagamento Pendente', 'Seu pagamento ainda está sendo processado. Por favor, aguarde alguns instantes.');
                     }
                 } else if (data.status === 'EXPIRED') {
-                    console.log('[kodex] Pagamento EXPIRADO');
+                    console.log('[v0] Pagamento EXPIRADO');
                     document.getElementById('checking').classList.add('hidden');
                     if (showStatusPopup) {
                         setStatusPopup('error', 'Pagamento Expirado', 'O prazo para este pagamento expirou. Por favor, gere um novo código PIX.');
                     }
                 }
             } catch (error) {
-                console.error('[kodex] Erro ao verificar pagamento:', error);
+                console.error('[v0] Erro ao verificar pagamento:', error);
                 document.getElementById('checking').classList.add('hidden');
                 
                 // Nota: Se a API não estiver acessível, isso é normal em desenvolvimento
@@ -573,6 +670,24 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            urlParams = getURLParameters();
+            
+            console.log('[v0] Parâmetros da URL:', urlParams);
+
+            if (urlParams.amount) {
+                urlAmount = parseFloat(urlParams.amount);
+                urlBolao = urlParams.bolao || null;
+                document.getElementById('valorInput').value = urlAmount.toFixed(2);
+                document.getElementById('inputSection').classList.add('hidden');
+                
+                console.log('[v0] Gerando transação automaticamente com amount:', urlAmount, 'bolao:', urlBolao);
+                
+                // Gerar transação automaticamente após um pequeno delay
+                setTimeout(() => {
+                    gerarTransacao();
+                }, 500);
+            }
+
             // Botão de verificação manual
             const checkPaymentBtn = document.getElementById('checkPayment');
             if (checkPaymentBtn) {
