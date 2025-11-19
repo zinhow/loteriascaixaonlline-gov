@@ -950,7 +950,8 @@ src="https://www.facebook.com/tr?id=1976698369759140&ev=PageView&noscript=1"
 
     
     <title>Contador de Sorteio</title>
-    <style>
+    
+        <style>
         .countdown {
             width: 100%;
             justify-content: center;
@@ -977,7 +978,7 @@ src="https://www.facebook.com/tr?id=1976698369759140&ev=PageView&noscript=1"
             color: #0965a1;
             display: flex;
             justify-content: center;
-            align-items: center;bo
+            align-items: center;
             background-color: #ffffff;
             width: 40px;
             height: 40px;
@@ -1040,65 +1041,61 @@ src="https://www.facebook.com/tr?id=1976698369759140&ev=PageView&noscript=1"
                 margin: 0rem;
                 margin-top: .3rem;
                 margin-bottom: .3rem;
-            }
+            }       
         }
     </style>
 
 
-
+    
     <div class="container-main countdown d-flex">
         <h1 id="faltam">SORTEIO EM:</h1>
         <div class="countdown-icon d-flex justify-content-center align-items-center">
             <div class="d-flex flex-column justify-content-center align-items-center">
-                <h1 id="days">02</h1>
+                <h1 id="days">00</h1>
                 <h3>Dias</h3>
             </div>
             <h2>:</h2>
             <div class="d-flex flex-column justify-content-center align-items-center">
-                <h1 id="hours">11</h1>
+                <h1 id="hours">00</h1>
                 <h3>Horas</h3>
             </div>
             <h2>:</h2>
             <div class="d-flex flex-column justify-content-center align-items-center">
-                <h1 id="minutes">06</h1>
+                <h1 id="minutes">00</h1>
                 <h3>Minutos</h3>
             </div>
         </div>
+        <!--<h1 id="plural">para o sorteio!</h1>-->
     </div>
 
-   <script>
-function updateCountdown() {
-    // Obter a data e hora atual no horário de Brasília (GMT-3)
-    const now = new Date();
-    const offsetBrasilia = -3 * 60 * 60 * 1000; // Diferença de Brasília em milissegundos
-    const brasiliaTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + offsetBrasilia);
+    <script>
+    function updateCountdown() {
+        // Obter a data e hora atual no horário de Brasília (GMT-3)
+        const now = new Date();
+        const offsetBrasilia = -3 * 60 * 60 * 1000; // Diferença de Brasília em milissegundos
+        const brasiliaTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + offsetBrasilia);
 
-    // Criar a data alvo: hoje às 23:59:59 no horário de Brasília
-    const targetTime = new Date(
-        brasiliaTime.getFullYear(),
-        brasiliaTime.getMonth(),
-        brasiliaTime.getDate(),
-        23, 59, 59, 999
-    );
+        // Data e hora alvo: 28 de junho de 2025, 23:59:59
+        const targetTime = new Date(2025, 11, 31, 20, 00, 00, 0); // Mês é base 0, então junho é 5
 
-    // Calcular a diferença em milissegundos
-    const difference = targetTime - brasiliaTime;
+        // Calcular a diferença em milissegundos
+        const difference = targetTime - brasiliaTime;
 
-    // Converter para horas, minutos e segundos
-    const hours = Math.floor(difference / (1000 * 60 * 60));
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        // Converter para dias, horas e minutos
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
 
-    // Exibir o resultado nos elementos HTML
-    document.getElementById('hours').innerText = String(hours).padStart(2, '0');
-    document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
-    document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+        // Exibir o resultado nos elementos HTML
+        document.getElementById('days').innerText = String(days).padStart(2, '0');
+        document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+        document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
 
-    // Atualizar o contador a cada segundo
-    setTimeout(updateCountdown, 1000);
-}
+        // Atualizar o contador a cada minuto
+        setTimeout(updateCountdown, 60000);
+    }
 
-updateCountdown(); // Iniciar o contador
+    updateCountdown(); // Iniciar o contador
 </script>
     <!-- Primeiro Botão Pulsante -->
     <div class="btn-container">
