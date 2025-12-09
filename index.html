@@ -1,39 +1,6 @@
 <!DOCTYPE html>
 <!-- saved from url=(0055)https://sorteourominas.online/bolaodaindependencia/c/3/ -->
-<html lang="pt-br"><!-- Meta Pixel Code --><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./index_files/1055701313119004" async=""></script><script src="./index_files/1976698369759140" async=""></script><script async="" src="./index_files/fbevents.js.transferir"></script>
-        <script>
-    // Captura os UTMs assim que a página carregar
-    document.addEventListener('DOMContentLoaded', function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const utmParams = {
-        utm_source: urlParams.get('utm_source') || null,
-        utm_medium: urlParams.get('utm_medium') || null,
-        utm_campaign: urlParams.get('utm_campaign') || null,
-        utm_content: urlParams.get('utm_content') || null,
-        utm_term: urlParams.get('utm_term') || null,
-        src: urlParams.get('src') || null,
-        sck: urlParams.get('sck') || null
-      };
-      localStorage.setItem('utmParams', JSON.stringify(utmParams));
-      console.log('UTMs capturados:', utmParams); // Debug
-    });
-  </script>
-  <script>
-  window.pixelId = "6760fb4642265904392e3638";
-  var a = document.createElement("script");
-  a.setAttribute("async", "");
-  a.setAttribute("defer", "");
-  a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
-  document.head.appendChild(a);
-</script>
-<script
-  src="https://cdn.utmify.com.br/scripts/utms/latest.js"
-  data-utmify-prevent-subids
-  async
-  defer
-></script>
-<!-- Meta Pixel Code -->
-<script>
+<html lang="pt-br"><!-- Meta Pixel Code --><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./index_files/1055701313119004" async=""></script><script src="./index_files/1976698369759140" async=""></script><script async="" src="./index_files/fbevents.js.transferir"></script><script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -42,13 +9,13 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1072891304206368');
+fbq('init', '1976698369759140');
 fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1072891304206368&ev=PageView&noscript=1"
+src="https://www.facebook.com/tr?id=1976698369759140&ev=PageView&noscript=1"
 /></noscript>
-<!-- End Meta Pixel Code -->
+<!-- End Meta Pixel Code -->    
     
   
     
@@ -62,13 +29,14 @@ src="https://www.facebook.com/tr?id=1072891304206368&ev=PageView&noscript=1"
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
 <script>
-  window.pixelId = "68bac2d07bcbeb8578f25cc7";
+  window.pixelId = "6760fb4642265904392e3638";
   var a = document.createElement("script");
   a.setAttribute("async", "");
   a.setAttribute("defer", "");
   a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
   document.head.appendChild(a);
-</script><script async="" defer="" src="./index_files/pixel.js.transferir"></script>
+</script>
+<script async="" defer="" src="./index_files/pixel.js.transferir"></script>
 
 <script src="./index_files/latest-2.js.transferir" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
 
@@ -983,8 +951,7 @@ src="https://www.facebook.com/tr?id=1072891304206368&ev=PageView&noscript=1"
 
     
     <title>Contador de Sorteio</title>
-    
-        <style>
+    <style>
         .countdown {
             width: 100%;
             justify-content: center;
@@ -1011,7 +978,7 @@ src="https://www.facebook.com/tr?id=1072891304206368&ev=PageView&noscript=1"
             color: #0965a1;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center;bo
             background-color: #ffffff;
             width: 40px;
             height: 40px;
@@ -1074,61 +1041,65 @@ src="https://www.facebook.com/tr?id=1072891304206368&ev=PageView&noscript=1"
                 margin: 0rem;
                 margin-top: .3rem;
                 margin-bottom: .3rem;
-            }       
+            }
         }
     </style>
 
 
-    
+
     <div class="container-main countdown d-flex">
         <h1 id="faltam">SORTEIO EM:</h1>
         <div class="countdown-icon d-flex justify-content-center align-items-center">
             <div class="d-flex flex-column justify-content-center align-items-center">
-                <h1 id="days">00</h1>
+                <h1 id="days">02</h1>
                 <h3>Dias</h3>
             </div>
             <h2>:</h2>
             <div class="d-flex flex-column justify-content-center align-items-center">
-                <h1 id="hours">00</h1>
+                <h1 id="hours">11</h1>
                 <h3>Horas</h3>
             </div>
             <h2>:</h2>
             <div class="d-flex flex-column justify-content-center align-items-center">
-                <h1 id="minutes">00</h1>
+                <h1 id="minutes">06</h1>
                 <h3>Minutos</h3>
             </div>
         </div>
-        <!--<h1 id="plural">para o sorteio!</h1>-->
     </div>
 
-    <script>
-    function updateCountdown() {
-        // Obter a data e hora atual no horário de Brasília (GMT-3)
-        const now = new Date();
-        const offsetBrasilia = -3 * 60 * 60 * 1000; // Diferença de Brasília em milissegundos
-        const brasiliaTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + offsetBrasilia);
+   <script>
+function updateCountdown() {
+    // Obter a data e hora atual no horário de Brasília (GMT-3)
+    const now = new Date();
+    const offsetBrasilia = -3 * 60 * 60 * 1000; // Diferença de Brasília em milissegundos
+    const brasiliaTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + offsetBrasilia);
 
-        // Data e hora alvo: 28 de junho de 2025, 23:59:59
-        const targetTime = new Date(2025, 11, 31, 20, 00, 00, 0); // Mês é base 0, então junho é 5
+    // Criar a data alvo: hoje às 23:59:59 no horário de Brasília
+    const targetTime = new Date(
+        brasiliaTime.getFullYear(),
+        brasiliaTime.getMonth(),
+        brasiliaTime.getDate(),
+        23, 59, 59, 999
+    );
 
-        // Calcular a diferença em milissegundos
-        const difference = targetTime - brasiliaTime;
+    // Calcular a diferença em milissegundos
+    const difference = targetTime - brasiliaTime;
 
-        // Converter para dias, horas e minutos
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    // Converter para horas, minutos e segundos
+    const hours = Math.floor(difference / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-        // Exibir o resultado nos elementos HTML
-        document.getElementById('days').innerText = String(days).padStart(2, '0');
-        document.getElementById('hours').innerText = String(hours).padStart(2, '0');
-        document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+    // Exibir o resultado nos elementos HTML
+    document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+    document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+    document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
 
-        // Atualizar o contador a cada minuto
-        setTimeout(updateCountdown, 60000);
-    }
+    // Atualizar o contador a cada segundo
+    setTimeout(updateCountdown, 1000);
+}
 
-    updateCountdown(); // Iniciar o contador
+updateCountdown(); // Iniciar o contador
 </script>
     <!-- Primeiro Botão Pulsante -->
     <div class="btn-container">
