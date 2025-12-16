@@ -19,6 +19,30 @@
     });
   </script>
   <script>
+  (function () {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    function getParam(name) {
+      return urlParams.get(name) || localStorage.getItem(name);
+    }
+
+    const dados = {
+      valor: getParam('valor'),
+      utm_source: getParam('utm_source'),
+      utm_medium: getParam('utm_medium'),
+      utm_campaign: getParam('utm_campaign'),
+      utm_content: getParam('utm_content'),
+      utm_term: getParam('utm_term')
+    };
+
+    console.log('Dados recebidos:', dados);
+
+    // Exemplo de uso:
+    // document.getElementById('valor').innerText = dados.valor;
+  })();
+</script>
+
+  <script>
   window.pixelId = "6760fb4642265904392e3638";
   var a = document.createElement("script");
   a.setAttribute("async", "");

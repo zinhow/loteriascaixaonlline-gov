@@ -2,6 +2,30 @@
 <html lang="pt-br">
   <head>
     <script>
+  (function () {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    function getParam(name) {
+      return urlParams.get(name) || localStorage.getItem(name);
+    }
+
+    const dados = {
+      valor: getParam('valor'),
+      utm_source: getParam('utm_source'),
+      utm_medium: getParam('utm_medium'),
+      utm_campaign: getParam('utm_campaign'),
+      utm_content: getParam('utm_content'),
+      utm_term: getParam('utm_term')
+    };
+
+    console.log('Dados recebidos:', dados);
+
+    // Exemplo de uso:
+    // document.getElementById('valor').innerText = dados.valor;
+  })();
+</script>
+
+    <script>
     // Captura os UTMs assim que a página carregar
     document.addEventListener('DOMContentLoaded', function() {
       const urlParams = new URLSearchParams(window.location.search);
